@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name            geoportal.gov.pl layers for WME without translating PROXY
-// @version         0.2.15.2
+// @version         0.2.15.3
 // @description     Displays layers from geoportal.gov.pl in WME
 // @grant           none
 // @include         https://*.waze.com/*/editor*
@@ -49,7 +49,7 @@ function geoportal_run() {
         wms_service_orto_2="http://sdi.geoportal.gov.pl/wms_orto/wmservice.aspx?"; // layer: ORTOFOTO,ORTOFOTO_ISOK
         wms_service_prng="http://mapy.geoportal.gov.pl/wss/service/pub/guest/G2_PRNG_WMS/MapServer/WMSServer?dpi=130&"; // nazwy
         wms_service_bud="http://mapy.geoportal.gov.pl/wss/service/pub/guest/G2_BDOT_BUD_2010/MapServer/WMSServer?"; // budynki
-        wms_bdot = "http://mapy.geoportal.gov.pl/wss/service/PZGiK/PRG/WMS/Addresses?dpi=130&"; //by Mistraz
+        wms_bdot = "http://mapy.geoportal.gov.pl/wss/service/PZGiK/PRG/WMS/Addresses?dpi=130&"; //by foobarbaz-pl
         var my_wazeMap = w;
         if (typeof my_wazeMap == undefined) my_wazeMap = window.W.map;
 
