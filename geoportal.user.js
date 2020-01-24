@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name            geoportal.gov.pl layers for WME without translating PROXY
-// @version         0.2.15.3
+// @version         0.2.15.4
 // @description     Displays layers from geoportal.gov.pl in WME
 // @grant           none
 // @include         https://*.waze.com/*/editor*
@@ -20,6 +20,7 @@
 
 /* Changelog:
  *
+ *  0.2.15.4 - update BDOT url (again)
  *  0.2.15.3 - update BDOT url
  *  0.2.15.2 - fixes for the new layers switcher
  *  0.2.15.1 - fixes window.Waze/window.W deprecation warnings
@@ -40,7 +41,7 @@ function GEOPORTAL_bootstrap()
 }
 
 function geoportal_run() {
-    GEOPORTAL = { ver: "0.2.15.3" };
+    GEOPORTAL = { ver: "0.2.15.4" };
     GEOPORTAL.init = function(w)
     {
         console.log('Geoportal: Version ' + this.ver + ' init start');
@@ -49,7 +50,7 @@ function geoportal_run() {
         wms_service_orto_2="http://sdi.geoportal.gov.pl/wms_orto/wmservice.aspx?"; // layer: ORTOFOTO,ORTOFOTO_ISOK
         wms_service_prng="http://mapy.geoportal.gov.pl/wss/service/pub/guest/G2_PRNG_WMS/MapServer/WMSServer?dpi=130&"; // nazwy
         wms_service_bud="http://mapy.geoportal.gov.pl/wss/service/pub/guest/G2_BDOT_BUD_2010/MapServer/WMSServer?"; // budynki
-        wms_bdot = "http://mapy.geoportal.gov.pl/wss/service/PZGiK/PRG/WMS/Addresses?dpi=130&"; //by foobarbaz-pl
+        wms_bdot = "https://integracja.gugik.gov.pl/cgi-bin/KrajowaIntegracjaNumeracjiAdresowej?dpi=130&";
         var my_wazeMap = w;
         if (typeof my_wazeMap == undefined) my_wazeMap = window.W.map;
 
@@ -146,10 +147,11 @@ function geoportal_run() {
                 a=this.ConvTo2180(a);
                 b=this.ConvTo2180(b);
 
-                bounds.bottom = a.lat;
-                bounds.right = a.lon;
-                bounds.top = b.lat;
-                bounds.left = b.lon;
+                //swapped order in BBOX params
+                bounds.bottom = b.lon;
+                bounds.right = b.lat;
+                bounds.top = a.lon;
+                bounds.left = a.lat;
             }
             // WMS 1.3 introduced axis order
             var reverseAxisOrder = this.reverseAxisOrder();
@@ -172,7 +174,7 @@ function geoportal_run() {
             var projectionCode = this.projection.getCode();
             var value = (projectionCode == "none") ? null : projectionCode;
             if (parseFloat(this.params.VERSION) >= 1.3) {
-                this.params.CRS = value;
+                this.params.CRS = "EPSG:2180"; //value;
             } else {
                 if (this.ep2180) {
                     this.params.SRS = "EPSG:2180"; //na sztywno najlepiej
@@ -185,8 +187,7 @@ function geoportal_run() {
                 newParams.TRANSPARENT = this.params.TRANSPARENT ? "TRUE" : "FALSE";
             }
 
-            return window.OpenLayers.Layer.Grid.prototype.getFullRequestString.apply(
-                                                            this, arguments);
+            return window.OpenLayers.Layer.Grid.prototype.getFullRequestString.apply(this, arguments);
         }
 
         geoportalAddLayer = function(layer) {
@@ -280,9 +281,10 @@ function geoportal_run() {
             "Geoportal - adresy BDOT",
             wms_bdot,
             {
-                layers: "PunktyAdresowe",
+                layers: "prg-adresy,prg-place",
                 transparent: "true",
-                format: "image/png32"
+                format: "image/png",
+                version: "1.3.0",
             },
             {
                 tileSize: tileSizeG,
