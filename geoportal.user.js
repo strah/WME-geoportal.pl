@@ -1,7 +1,7 @@
 // ==UserScript==
-// @name            geoportal.gov.pl layers for WME without translating PROXY
-// @version         0.2.15.4
-// @description     Displays layers from geoportal.gov.pl in WME
+// @name            geoportal.gov.pl layers for WME (API Jan 2020)
+// @version         0.2.15.5
+// @description     Adds geoportal.gov.pl overlays ("satelite view", cities, places, house numbers)
 // @grant           none
 // @include         https://*.waze.com/*/editor*
 // @include         https://*.waze.com/editor*
@@ -14,18 +14,20 @@
 // ==/UserScript==
 
 /**
- * Source code: https://github.com/TKr/WME-geoportal
+ * Source code: https://github.com/TKr/WME-geoportal - deprecated
+ * Source code: https://github.com/strah/WME-geoportal.pl
  */
 
 
 /* Changelog:
  *
- *  0.2.15.4 - update BDOT url (again)
- *  0.2.15.3 - update BDOT url
- *  0.2.15.2 - fixes for the new layers switcher
- *  0.2.15.1 - fixes window.Waze/window.W deprecation warnings
- *  0.2.15.0 - fixes layers zIndex switching
- *  0.2.14.1 - fixes include addresses
+ *  0.2.15.5 - added new layer: "miejsca", simplified layers names
+ *  0.2.15.4 - updated BDOT url (again)
+ *  0.2.15.3 - updated BDOT url
+ *  0.2.15.2 - fixed for the new layers switcher
+ *  0.2.15.1 - fixed window.Waze/window.W deprecation warnings
+ *  0.2.15.0 - fixed layers zIndex switching
+ *  0.2.14.1 - fixed include addresses
  *  0.2.14.0 - fixed adding toggle on layer list (new WME version)
  */
 function GEOPORTAL_bootstrap()
@@ -147,7 +149,7 @@ function geoportal_run() {
                 a=this.ConvTo2180(a);
                 b=this.ConvTo2180(b);
 
-                //swapped order in BBOX params
+                //swapped order in BBOX params - not sure where the error was: here or in the API
                 bounds.bottom = b.lon;
                 bounds.right = b.lat;
                 bounds.top = a.lon;
@@ -248,7 +250,7 @@ function geoportal_run() {
 
         //geoportal_prng
         var geop_prng = new OpenLayers.Layer.WMS(
-            "Geoportal - nazwy PRNG",
+            "Geoportal - nazwy",
             wms_service_prng,
             {
                 layers: "Wies,Miasto",
@@ -269,19 +271,18 @@ function geoportal_run() {
             }
         );
         if ("undefined" != typeof I18n.translations.en) {
-           I18n.translations.en.layers.name["nazwy"] = "Geoportal - nazwy PRNG";
+           I18n.translations.en.layers.name["nazwy"] = "Geoportal - nazwy";
         }
 
         if ("undefined" != typeof I18n.translations.pl) {
-           I18n.translations.pl.layers.name["nazwy"] = "Geoportal - nazwy PRNG";
+           I18n.translations.pl.layers.name["nazwy"] = "Geoportal - nazwy";
         }
 
-        /// ,Zabudowa_A,Przem_gosp_A,KomplKom_A
         var geop_adresy2 = new OpenLayers.Layer.WMS(
-            "Geoportal - adresy BDOT",
+            "Geoportal - adresy",
             wms_bdot,
             {
-                layers: "prg-adresy,prg-place",
+                layers: "prg-adresy",
                 transparent: "true",
                 format: "image/png",
                 version: "1.3.0",
@@ -301,11 +302,42 @@ function geoportal_run() {
         );
 
         if ("undefined" != typeof I18n.translations.en) {
-           I18n.translations.en.layers.name["adresy2"] = "Geoportal - adresy BDOT";
+           I18n.translations.en.layers.name["adresy2"] = "Geoportal - adresy";
         }
 
         if ("undefined" != typeof I18n.translations.pl) {
-           I18n.translations.pl.layers.name["adresy2"] = "Geoportal - adresy BDOT";
+           I18n.translations.pl.layers.name["adresy2"] = "Geoportal - adresy";
+        }
+
+        var geop_miejsca = new OpenLayers.Layer.WMS(
+            "Geoportal - miejsca",
+            wms_bdot,
+            {
+                layers: "prg-place",
+                transparent: "true",
+                format: "image/png",
+                version: "1.3.0",
+            },
+            {
+                tileSize: tileSizeG,
+                isBaseLayer: false,
+                visibility: false,
+                uniqueName: "miejsca",
+                epsg900913: epsg900913,
+                epsg4326: epsg4326,
+                getURL: getUrl4326,
+                ConvTo2180: ConvTo2180,
+                ep2180: true,
+                getFullRequestString: getFullRequestString4326
+            }
+        );
+
+        if ("undefined" != typeof I18n.translations.en) {
+           I18n.translations.en.layers.name["miejsca"] = "Geoportal - miejsca";
+        }
+
+        if ("undefined" != typeof I18n.translations.pl) {
+           I18n.translations.pl.layers.name["miejsca"] = "Geoportal - miejsca";
         }
 
         console.log('Geoportal: adding layers');
@@ -319,6 +351,9 @@ function geoportal_run() {
 
             my_wazeMap.addLayer(geop_adresy2);
             geoportalAddLayer(geop_adresy2);
+
+            my_wazeMap.addLayer(geop_miejsca);
+            geoportalAddLayer(geop_miejsca);
 
             console.log('Geoportal: layers added');
             this.OrtoTimer();
