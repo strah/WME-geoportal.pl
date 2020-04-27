@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name            geoportal.gov.pl layers for WME (API Jan 2020)
-// @version         0.2.15.5
+// @version         0.2.15.8
 // @description     Adds geoportal.gov.pl overlays ("satelite view", cities, places, house numbers)
 // @grant           none
 // @include         https://*.waze.com/*/editor*
@@ -21,6 +21,9 @@
 
 /* Changelog:
  *
+ *  0.2.15.8 - added railcrossings overlay
+ *  0.2.15.7 - fixed for the new layers swither, again
+ *  0.2.15.6 - fixed for the new layers swither
  *  0.2.15.5 - added new layer: "miejsca", simplified layers names
  *  0.2.15.4 - updated BDOT url (again)
  *  0.2.15.3 - updated BDOT url
@@ -53,6 +56,7 @@ function geoportal_run() {
         wms_service_prng="http://mapy.geoportal.gov.pl/wss/service/pub/guest/G2_PRNG_WMS/MapServer/WMSServer?dpi=130&"; // nazwy
         wms_service_bud="http://mapy.geoportal.gov.pl/wss/service/pub/guest/G2_BDOT_BUD_2010/MapServer/WMSServer?"; // budynki
         wms_bdot = "https://integracja.gugik.gov.pl/cgi-bin/KrajowaIntegracjaNumeracjiAdresowej?dpi=130&";
+        wms_rail = "https://mapy.geoportal.gov.pl/wss/service/sdi/Przejazdy/get?REQUEST=GetMap&";
         var my_wazeMap = w;
         if (typeof my_wazeMap == undefined) my_wazeMap = window.W.map;
 
@@ -197,23 +201,14 @@ function geoportal_run() {
             var displayGroupSelector = document.querySelector('#layer-switcher-region .menu .list-unstyled');
             if (displayGroupSelector != null) {
                 var displayGroup = displayGroupSelector.querySelector('li.group:nth-child(4) ul');
-                var toggler = document.createElement('li');
-                var togglerContainer = document.createElement('div');
-                togglerContainer.className = 'wz-checkbox';
-                var checkbox = document.createElement('input');
-                checkbox.type = 'checkbox';
-                checkbox.id = 'layer-switcher-geop_' + Math.random().toString(36).substring(7);
-                checkbox.className = 'toggle';
-                checkbox.addEventListener('click', function(e) {
+                var toggler = document.createElement('wz-checkbox');
+                var togglerContainer = document.createElement('li');
+                togglerContainer.className = 'hydrated';
+                togglerContainer.id = 'layer-switcher-geop_' + Math.random().toString(36).substring(7);
+                toggler.appendChild(document.createTextNode(layer.name));
+                toggler.addEventListener('click', function(e) {
                   layer.setVisibility(e.target.checked);
                 });
-                togglerContainer.appendChild(checkbox);
-                var label = document.createElement('label');
-                label.htmlFor = checkbox.id;
-                var labelText = document.createElement('span');
-                labelText.className = 'label-text';
-                label.appendChild(document.createTextNode(layer.name));
-                togglerContainer.appendChild(label);
                 toggler.appendChild(togglerContainer);
                 displayGroup.appendChild(toggler);
             }
@@ -340,6 +335,37 @@ function geoportal_run() {
            I18n.translations.pl.layers.name["miejsca"] = "Geoportal - miejsca";
         }
 
+        var geop_rail = new OpenLayers.Layer.WMS(
+            "Geoportal - przejazdy kolejowe",
+            wms_rail,
+            {
+                layers: "PMT_Linie_Kolejowe_Sp__z_o_o_,Kopalnia_Piasku_KOTLARNIA_-_Linie_Kolejowe_Sp__z__o_o_,Jastrzębska_Spółka_Kolejowa_Sp__z_o_o_,Infra_SILESIA_S_A_,EUROTERMINAL_Sławków_Sp__z_o_o_,Dolnośląska_Służba_Dróg_i_Kolei_we_Wrocławiu,CTL_Maczki-Bór_S_A_,CARGOTOR_Sp__z_o_o_,PKP_SKM_w_Trójmieście_Sp__z_o_o_,PKP_Linia_Hutnicza_Szerokotorowa_Sp__z_o__o_,PKP_Polskie_Linie_Kolejowe",
+                transparent: "true",
+                format: "image/png",
+                version: "1.3.0",
+            },
+            {
+                tileSize: tileSizeG,
+                isBaseLayer: false,
+                visibility: false,
+                uniqueName: "rail",
+                epsg900913: epsg900913,
+                epsg4326: epsg4326,
+                getURL: getUrl4326,
+                ConvTo2180: ConvTo2180,
+                ep2180: true,
+                getFullRequestString: getFullRequestString4326
+            }
+        );
+
+        if ("undefined" != typeof I18n.translations.en) {
+           I18n.translations.en.layers.name["rail"] = "Geoportal - przejazdy kolejowe";
+        }
+
+        if ("undefined" != typeof I18n.translations.pl) {
+           I18n.translations.pl.layers.name["rail"] = "Geoportal - przejazdy kolejowe";
+        }
+
         console.log('Geoportal: adding layers');
         if(my_wazeMap.getLayersByName("Geoportal - orto").length == 0)
         {
@@ -354,6 +380,9 @@ function geoportal_run() {
 
             my_wazeMap.addLayer(geop_miejsca);
             geoportalAddLayer(geop_miejsca);
+
+            my_wazeMap.addLayer(geop_rail);
+            geoportalAddLayer(geop_rail);
 
             console.log('Geoportal: layers added');
             this.OrtoTimer();
