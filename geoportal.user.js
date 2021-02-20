@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name            geoportal.gov.pl layers for WME (API Jan 2020)
-// @version         0.2.15.8
+// @version         0.2.15.10
 // @description     Adds geoportal.gov.pl overlays ("satelite view", cities, places, house numbers)
 // @grant           none
 // @include         https://*.waze.com/*/editor*
@@ -21,6 +21,8 @@
 
 /* Changelog:
  *
+ *  0.2.15.10 - updated ortofoto map API URL
+ *  0.2.15.9 - added mileage bars overlay
  *  0.2.15.8 - added railcrossings overlay
  *  0.2.15.7 - fixed for the new layers swither, again
  *  0.2.15.6 - fixed for the new layers swither
@@ -35,7 +37,6 @@
  */
 function GEOPORTAL_bootstrap()
 {
-    console.log("Geoportal: injecting code to page.");
     //use "dirty" but effective method with injection to document
     var DLscript = document.createElement("script");
     DLscript.textContent =''+
@@ -46,17 +47,18 @@ function GEOPORTAL_bootstrap()
 }
 
 function geoportal_run() {
-    GEOPORTAL = { ver: "0.2.15.4" };
+    GEOPORTAL = { ver: "0.2.15.10" };
     GEOPORTAL.init = function(w)
     {
         console.log('Geoportal: Version ' + this.ver + ' init start');
 
-        wms_service_orto="http://mapy.geoportal.gov.pl/wss/service/img/guest/ORTO/MapServer/WMSServer?"; // layer: Raster
+        wms_service_orto="https://mapy.geoportal.gov.pl/wss/service/PZGIK/ORTO/WMS/StandardResolution?"; // layer: Raster
         wms_service_orto_2="http://sdi.geoportal.gov.pl/wms_orto/wmservice.aspx?"; // layer: ORTOFOTO,ORTOFOTO_ISOK
         wms_service_prng="http://mapy.geoportal.gov.pl/wss/service/pub/guest/G2_PRNG_WMS/MapServer/WMSServer?dpi=130&"; // nazwy
         wms_service_bud="http://mapy.geoportal.gov.pl/wss/service/pub/guest/G2_BDOT_BUD_2010/MapServer/WMSServer?"; // budynki
         wms_bdot = "https://integracja.gugik.gov.pl/cgi-bin/KrajowaIntegracjaNumeracjiAdresowej?dpi=130&";
         wms_rail = "https://mapy.geoportal.gov.pl/wss/service/sdi/Przejazdy/get?REQUEST=GetMap&";
+        wms_mileage = "https://mapy.geoportal.gov.pl/wss/ext/OSM/SiecDrogowaOSM?REQUEST=GetMap&";
         var my_wazeMap = w;
         if (typeof my_wazeMap == undefined) my_wazeMap = window.W.map;
 
@@ -366,6 +368,38 @@ function geoportal_run() {
            I18n.translations.pl.layers.name["rail"] = "Geoportal - przejazdy kolejowe";
         }
 
+        var tileSizeMil = new window.OpenLayers.Size(2048,2048);
+        var geop_mileage = new OpenLayers.Layer.WMS(
+            "Geoportal - pikietaz",
+            wms_mileage,
+            {
+                layers: "pikietaz",
+                transparent: "true",
+                format: "image/png",
+                version: "1.1.1",
+            },
+            {
+                tileSize: tileSizeMil,
+                isBaseLayer: false,
+                visibility: false,
+                uniqueName: "mileage",
+                epsg900913: epsg900913,
+                epsg4326: epsg4326,
+                getURL: getUrl4326,
+                ConvTo2180: ConvTo2180,
+                ep2180: false,
+                getFullRequestString: getFullRequestString4326
+            }
+        );
+
+        if ("undefined" != typeof I18n.translations.en) {
+           I18n.translations.en.layers.name["rail"] = "Geoportal - pikietaz";
+        }
+
+        if ("undefined" != typeof I18n.translations.pl) {
+           I18n.translations.pl.layers.name["rail"] = "Geoportal - pikietaz";
+        }
+
         console.log('Geoportal: adding layers');
         if(my_wazeMap.getLayersByName("Geoportal - orto").length == 0)
         {
@@ -383,6 +417,9 @@ function geoportal_run() {
 
             my_wazeMap.addLayer(geop_rail);
             geoportalAddLayer(geop_rail);
+
+            my_wazeMap.addLayer(geop_mileage);
+            geoportalAddLayer(geop_mileage);
 
             console.log('Geoportal: layers added');
             this.OrtoTimer();
