@@ -383,7 +383,7 @@ function geoportal_run() {
 
         //Rzeki i kanały
 
-        var geop_drogi = new OpenLayers.Layer.WMS(
+        var geop_rzeki = new OpenLayers.Layer.WMS(
             "Geoportal - rzeki",
             wms_service_bud,
             {
@@ -570,6 +570,11 @@ function geoportal_run() {
 
             my_wazeMap.addLayer(geop_drogi);
             geoportalAddLayer(geop_drogi);
+
+            my_wazeMap.addLayer(geop_rzeki);
+            geoportalAddLayer(geop_rzeki);
+
+
 
             console.log('Geoportal: layers added');
             this.OrtoTimer();
