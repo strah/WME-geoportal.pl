@@ -384,7 +384,7 @@ function geoportal_run() {
         //Rzeki i kanały
 
         var geop_drogi = new OpenLayers.Layer.WMS(
-            "Geoportal - rzeki i kanały",
+            "Geoportal - rzeki",
             wms_service_bud,
             {
                 layers: "kan,kanEt,rz,rzEt",
