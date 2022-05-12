@@ -58,7 +58,7 @@ function geoportal_run() {
         wms_service_orto="https://mapy.geoportal.gov.pl/wss/service/PZGIK/ORTO/WMS/StandardResolution?"; // layer: Raster
         wms_service_orto_2="http://sdi.geoportal.gov.pl/wms_orto/wmservice.aspx?"; // layer: ORTOFOTO,ORTOFOTO_ISOK
         wms_service_prng="http://mapy.geoportal.gov.pl/wss/service/pub/guest/G2_PRNG_WMS/MapServer/WMSServer?dpi=130&"; // nazwy
-        wms_service_bud="http://mapy.geoportal.gov.pl/wss/service/pub/guest/G2_BDOT_BUD_2010/MapServer/WMSServer?"; // budynki
+        wms_service_bud="https://mapy.geoportal.gov.pl/wss/service/pub/guest/kompozycja_BDOT10k_WMS/MapServer/WMSServer"; // budynki
         wms_bdot = "https://mapy.geoportal.gov.pl/wss/ext/KrajowaIntegracjaNumeracjiAdresowej?dpi=130&";
         wms_rail = "https://mapy.geoportal.gov.pl/wss/service/sdi/Przejazdy/get?REQUEST=GetMap&";
         wms_mileage = "https://mapy.geoportal.gov.pl/wss/ext/OSM/SiecDrogowaOSM?REQUEST=GetMap&";
@@ -310,6 +310,112 @@ function geoportal_run() {
            I18n.translations.pl.layers.name["adresy2"] = "Geoportal - adresy";
         }
 
+        //Budynki
+
+        var geop_budynki = new OpenLayers.Layer.WMS(
+            "Geoportal - budynki",
+            wms_service_bud,
+            {
+                layers: "BudMJ,BudMW,BudMWy,BudSp,BudGo,BudPWy,BudU,BudUWy,BudZr,Kap,Szkl,SwCh,SwNch",
+                transparent: "true",
+                format: "image/png",
+                version: "1.3.0",
+            },
+            {
+                tileSize: tileSizeG,
+                isBaseLayer: false,
+                visibility: false,
+                uniqueName: "budynki2",
+                epsg900913: epsg900913,
+                epsg4326: epsg4326,
+                getURL: getUrl4326,
+                ConvTo2180: ConvTo2180,
+                ep2180: true,
+                getFullRequestString: getFullRequestString4326
+            }
+        );
+
+        if ("undefined" != typeof I18n.translations.en) {
+           I18n.translations.en.layers.name["budynki2"] = "Geoportal - budynki";
+        }
+
+        if ("undefined" != typeof I18n.translations.pl) {
+           I18n.translations.pl.layers.name["budynki2"] = "Geoportal - budynki";
+        }
+
+        //Budynki KONIEC
+
+
+        //Drogi
+
+        var geop_drogi = new OpenLayers.Layer.WMS(
+            "Geoportal - drogi",
+            wms_service_bud,
+            {
+                layers: "AuBud,DrDGr,DrEk,DrLGr,JAu,JDrEk,JDrG,JDLNTw,JDrLNUt,JDrZTw",
+                transparent: "true",
+                format: "image/png",
+                version: "1.3.0",
+            },
+            {
+                tileSize: tileSizeG,
+                isBaseLayer: false,
+                visibility: false,
+                uniqueName: "drogi2",
+                epsg900913: epsg900913,
+                epsg4326: epsg4326,
+                getURL: getUrl4326,
+                ConvTo2180: ConvTo2180,
+                ep2180: true,
+                getFullRequestString: getFullRequestString4326
+            }
+        );
+
+        if ("undefined" != typeof I18n.translations.en) {
+           I18n.translations.en.layers.name["drogi2"] = "Geoportal - drogi";
+        }
+
+        if ("undefined" != typeof I18n.translations.pl) {
+           I18n.translations.pl.layers.name["drogi2"] = "Geoportal - drogi";
+        }
+
+        //Drogi KONIEC
+
+        //Rzeki i kanały
+
+        var geop_rzeki = new OpenLayers.Layer.WMS(
+            "Geoportal - rzeki",
+            wms_service_bud,
+            {
+                layers: "kan,kanEt,rz,rzEt",
+                transparent: "true",
+                format: "image/png",
+                version: "1.3.0",
+            },
+            {
+                tileSize: tileSizeG,
+                isBaseLayer: false,
+                visibility: false,
+                uniqueName: "rzeki2",
+                epsg900913: epsg900913,
+                epsg4326: epsg4326,
+                getURL: getUrl4326,
+                ConvTo2180: ConvTo2180,
+                ep2180: true,
+                getFullRequestString: getFullRequestString4326
+            }
+        );
+
+        if ("undefined" != typeof I18n.translations.en) {
+           I18n.translations.en.layers.name["rzeki2"] = "Geoportal - rzeki";
+        }
+
+        if ("undefined" != typeof I18n.translations.pl) {
+           I18n.translations.pl.layers.name["rzeki2"] = "Geoportal - rzeki";
+        }
+
+        //Rzeki KONIEC
+
         var geop_miejsca = new OpenLayers.Layer.WMS(
             "Geoportal - miejsca",
             wms_bdot,
@@ -459,6 +565,17 @@ function geoportal_run() {
             my_wazeMap.addLayer(geop_parcels);
             geoportalAddLayer(geop_parcels);
 
+            my_wazeMap.addLayer(geop_budynki);
+            geoportalAddLayer(geop_budynki);
+
+            my_wazeMap.addLayer(geop_drogi);
+            geoportalAddLayer(geop_drogi);
+
+            my_wazeMap.addLayer(geop_rzeki);
+            geoportalAddLayer(geop_rzeki);
+
+
+
             console.log('Geoportal: layers added');
             this.OrtoTimer();
         }
@@ -501,4 +618,5 @@ function geoportal_run() {
     GEOPORTAL.initBootstrap();
 }
 GEOPORTAL_bootstrap()
+
 
