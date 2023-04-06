@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name            geoportal.gov.pl layers for WME (API Jan 2020)
-// @version         0.2.15.16
+// @version         0.2.15.17
 // @description     Adds geoportal.gov.pl overlays ("satelite view", cities, places, house numbers)
 // @grant           none
 // @include         https://*.waze.com/*/editor*
@@ -21,6 +21,7 @@
 
 /* Changelog:
  *
+ *  0.2.15.17 - accommodating WME updates (by @luc45z)
  *  0.2.15.16 - Fix for CSP errors
  *  0.2.15.15 - Added streets overlay (by absf11_2)
  *  0.2.15.14 - Added hi-res ortophoto map (by absf11_2)
@@ -529,12 +530,12 @@
             setTimeout(function(){
                 var a = window.W.map.getLayersBy("uniqueName","orto1");
                 if (a[0]) {
-                    a[0].setZIndex(333);
+                    a[0].setZIndex(339);
                 }
 
                 var b = window.W.map.getLayersBy("uniqueName","ortoHigh");
                 if (b[0]) {
-                    b[0].setZIndex(333);
+                    b[0].setZIndex(339);
                 }
 
                 var google_map = window.W.map.getLayersBy("uniqueName","satellite_imagery");
