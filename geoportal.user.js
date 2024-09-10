@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name            geoportal.gov.pl layers for WME (API Jan 2020)
-// @version         0.2.15.17
+// @version         0.2.15.20
 // @description     Adds geoportal.gov.pl overlays ("satelite view", cities, places, house numbers)
 // @grant           none
 // @include         https://*.waze.com/*/editor*
@@ -11,6 +11,8 @@
 // @copyright       2013-2018+, Patryk Ściborek, Paweł Pyrczak
 // @run-at          document-end
 // @namespace https://greasyfork.org/users/9996
+// @downloadURL https://update.greasyfork.org/scripts/395614/geoportalgovpl%20layers%20for%20WME%20%28API%20Jan%202020%29.user.js
+// @updateURL https://update.greasyfork.org/scripts/395614/geoportalgovpl%20layers%20for%20WME%20%28API%20Jan%202020%29.meta.js
 // ==/UserScript==
 
 /**
@@ -21,6 +23,9 @@
 
 /* Changelog:
  *
+ *  0.2.15.20 - css tweaks - moving toggles to the "view" section
+ *  0.2.15.19 - css tweaks
+ *  0.2.15.18 - accommodating WME updates (by @luc45z)
  *  0.2.15.17 - accommodating WME updates (by @luc45z)
  *  0.2.15.16 - Fix for CSP errors
  *  0.2.15.15 - Added streets overlay (by absf11_2)
@@ -45,10 +50,18 @@
 (function () {
     
     function geoportal_run() {
-        GEOPORTAL = { ver: "0.2.15.16" };
+        GEOPORTAL = { ver: "0.2.15.19" };
         GEOPORTAL.init = function(w)
         {
             console.log('Geoportal: Version ' + this.ver + ' init start');
+
+            const style = document.createElement('style');
+            style.innerHTML = `
+                .layer-switcher ul[class^="collapsible"]  {
+                    max-height: none;
+                }
+            `;
+            document.head.appendChild(style);
 
             wms_service_orto="https://mapy.geoportal.gov.pl/wss/service/PZGIK/ORTO/WMS/StandardResolution?"; // layer: Raster
             wms_service_orto_high="https://mapy.geoportal.gov.pl/wss/service/PZGIK/ORTO/WMS/HighResolution?"; // layer: Raster
@@ -202,7 +215,7 @@
                 // Add layer entry in the new layer drawer
                 var displayGroupSelector = document.querySelector('#layer-switcher-region .menu .list-unstyled');
                 if (displayGroupSelector != null) {
-                    var displayGroup = displayGroupSelector.querySelector('li.group:nth-child(4) ul');
+                    var displayGroup = displayGroupSelector.querySelector('li.group:nth-child(5) ul');
                     var toggler = document.createElement('wz-checkbox');
                     var togglerContainer = document.createElement('li');
                     togglerContainer.className = 'hydrated';
@@ -530,12 +543,12 @@
             setTimeout(function(){
                 var a = window.W.map.getLayersBy("uniqueName","orto1");
                 if (a[0]) {
-                    a[0].setZIndex(339);
+                    a[0].setZIndex(2050);
                 }
 
                 var b = window.W.map.getLayersBy("uniqueName","ortoHigh");
                 if (b[0]) {
-                    b[0].setZIndex(339);
+                    b[0].setZIndex(2050);
                 }
 
                 var google_map = window.W.map.getLayersBy("uniqueName","satellite_imagery");
