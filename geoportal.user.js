@@ -513,8 +513,8 @@
                 my_wazeMap.addLayer(geop_orto_high);
                 geoportalAddLayer(geop_orto_high);
 
-                my_wazeMap.addLayer(geop_prng);
-                geoportalAddLayer(geop_prng);
+                //my_wazeMap.addLayer(geop_prng);
+                //geoportalAddLayer(geop_prng);
 
                 my_wazeMap.addLayer(geop_adresy2);
                 geoportalAddLayer(geop_adresy2);
