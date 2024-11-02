@@ -631,6 +631,15 @@
                 my_wazeMap.addLayer(geop_parcels);
                 geoportalAddLayer(geop_parcels);
 
+                my_wazeMap.addLayer(geop_b_city);
+                geoportalAddLayer(geop_b_city);
+
+                my_wazeMap.addLayer(geop_b_woj);
+                geoportalAddLayer(geop_b_woj);
+
+                my_wazeMap.addLayer(geop_b_pl);
+                geoportalAddLayer(geop_b_pl);
+
                 console.log('Geoportal: layers added');
                 this.OrtoTimer();
             }
