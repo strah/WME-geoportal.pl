@@ -23,6 +23,7 @@
 
 /* Changelog:
  *
+ *  0.2.16.0 - added city, voivodeship and country borders overlay
  *  0.2.15.20 - css tweaks - moving toggles to the "view" section
  *  0.2.15.19 - css tweaks
  *  0.2.15.18 - accommodating WME updates (by @luc45z)
@@ -72,6 +73,7 @@
             wms_rail = "https://mapy.geoportal.gov.pl/wss/service/sdi/Przejazdy/get?REQUEST=GetMap&";
             wms_mileage = "https://mapy.geoportal.gov.pl/wss/ext/OSM/SiecDrogowaOSM?REQUEST=GetMap&";
             wms_parcels="https://integracja.gugik.gov.pl/cgi-bin/KrajowaIntegracjaEwidencjiGruntow?"; // ewidencja
+            wms_border_city="https://mapy.geoportal.gov.pl/wss/service/PZGIK/PRG/WMS/AdministrativeBoundaries?REQUEST=GetMap&";
             var my_wazeMap = w;
             if (typeof my_wazeMap == undefined) my_wazeMap = window.W.map;
 
@@ -503,6 +505,101 @@
             if ("undefined" != typeof I18n.translations.pl) {
             I18n.translations.pl.layers.name["parcels"] = "Geoportal - podział adm.";
             }
+
+            tileSizeMil = new window.OpenLayers.Size(1024,1024);
+            var geop_b_city = new OpenLayers.Layer.WMS(
+                "Granice - Miasta",
+                wms_border_city,
+                {
+                    layers: "A06_Granice_obrebow_ewidencyjnych,A05_Granice_jednostek_ewidencyjnych,A04_Granice_miast",
+                    transparent: "true",
+                    format: "image/png",
+                    version: "1.1.1",
+                },
+                {
+                    tileSize: tileSizeMil,
+                    isBaseLayer: false,
+                    visibility: false,
+                    uniqueName: "citi",
+                    epsg900913: epsg900913,
+                    epsg4326: epsg4326,
+                    getURL: getUrl4326,
+                    ConvTo2180: ConvTo2180,
+                    ep2180: false,
+                    getFullRequestString: getFullRequestString4326
+                }
+            );
+
+            if ("undefined" != typeof I18n.translations.en) {
+                I18n.translations.en.layers.name["city"] = "Border - City";
+            }
+
+            if ("undefined" != typeof I18n.translations.pl) {
+                I18n.translations.pl.layers.name["city"] = "Border - City";
+            }
+
+            var geop_b_woj = new OpenLayers.Layer.WMS(
+                "Granice - woj",
+                wms_border_city,
+                {
+                    layers: "A01_Granice_wojewodztw",
+                    transparent: "true",
+                    format: "image/png",
+                    version: "1.1.1",
+                },
+                {
+                    tileSize: tileSizeMil,
+                    isBaseLayer: false,
+                    visibility: false,
+                    uniqueName: "citi",
+                    epsg900913: epsg900913,
+                    epsg4326: epsg4326,
+                    getURL: getUrl4326,
+                    ConvTo2180: ConvTo2180,
+                    ep2180: false,
+                    getFullRequestString: getFullRequestString4326
+                }
+            );
+
+            if ("undefined" != typeof I18n.translations.en) {
+                I18n.translations.en.layers.name["woj"] = "Border - woj";
+            }
+
+            if ("undefined" != typeof I18n.translations.pl) {
+                I18n.translations.pl.layers.name["woj"] = "Border - woj";
+            }
+
+            var geop_b_pl = new OpenLayers.Layer.WMS(
+                "Granice - PL",
+                wms_border_city,
+                {
+                    layers: "A00_Granice_panstwa",
+                    transparent: "true",
+                    format: "image/png",
+                    version: "1.1.1",
+                },
+                {
+                    tileSize: tileSizeMil,
+                    isBaseLayer: false,
+                    visibility: false,
+                    uniqueName: "citi",
+                    epsg900913: epsg900913,
+                    epsg4326: epsg4326,
+                    getURL: getUrl4326,
+                    ConvTo2180: ConvTo2180,
+                    ep2180: false,
+                    getFullRequestString: getFullRequestString4326
+                }
+            );
+
+            if ("undefined" != typeof I18n.translations.en) {
+                I18n.translations.en.layers.name["pl"] = "Border - PL";
+            }
+
+            if ("undefined" != typeof I18n.translations.pl) {
+                I18n.translations.pl.layers.name["pl"] = "Border - PL";
+            }
+
 
             console.log('Geoportal: adding layers');
             if(my_wazeMap.getLayersByName("Geoportal - orto").length == 0)
