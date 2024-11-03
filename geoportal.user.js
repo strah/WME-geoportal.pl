@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name            geoportal.gov.pl layers for WME (API Jan 2020)
-// @version         0.2.15.20
+// @version         0.2.15.21
 // @description     Adds geoportal.gov.pl overlays ("satelite view", cities, places, house numbers)
 // @grant           none
 // @include         https://*.waze.com/*/editor*
@@ -23,7 +23,7 @@
 
 /* Changelog:
  *
- *  0.2.16.0 - added city, voivodeship and country borders overlay
+ *  0.2.15.21 - added city, voivodeship and country borders overlay
  *  0.2.15.20 - css tweaks - moving toggles to the "view" section
  *  0.2.15.19 - css tweaks
  *  0.2.15.18 - accommodating WME updates (by @luc45z)
@@ -51,7 +51,7 @@
 (function () {
     
     function geoportal_run() {
-        GEOPORTAL = { ver: "0.2.15.19" };
+        GEOPORTAL = { ver: "0.2.15.21" };
         GEOPORTAL.init = function(w)
         {
             console.log('Geoportal: Version ' + this.ver + ' init start');
@@ -73,7 +73,7 @@
             wms_rail = "https://mapy.geoportal.gov.pl/wss/service/sdi/Przejazdy/get?REQUEST=GetMap&";
             wms_mileage = "https://mapy.geoportal.gov.pl/wss/ext/OSM/SiecDrogowaOSM?REQUEST=GetMap&";
             wms_parcels="https://integracja.gugik.gov.pl/cgi-bin/KrajowaIntegracjaEwidencjiGruntow?"; // ewidencja
-            wms_border_city="https://mapy.geoportal.gov.pl/wss/service/PZGIK/PRG/WMS/AdministrativeBoundaries?REQUEST=GetMap&";
+            wms_border_city="https://mapy.geoportal.gov.pl/wss/service/PZGIK/PRG/WMS/AdministrativeBoundaries?REQUEST=GetMap&"
             var my_wazeMap = w;
             if (typeof my_wazeMap == undefined) my_wazeMap = window.W.map;
 
@@ -416,7 +416,7 @@
                 "Geoportal - przejazdy kolejowe",
                 wms_rail,
                 {
-                    layers: "PMT_Linie_Kolejowe_Sp__z_o_o_,Kopalnia_Piasku_KOTLARNIA_-_Linie_Kolejowe_Sp__z__o_o_,Jastrzębska_Spółka_Kolejowa_Sp__z_o_o_,Infra_SILESIA_S_A_,EUROTERMINAL_Sławków_Sp__z_o_o_,Dolnośląska_Służba_Dróg_i_Kolei_we_Wrocławiu,CTL_Maczki-Bór_S_A_,CARGOTOR_Sp__z_o_o_,PKP_SKM_w_Trójmieście_Sp__z_o_o_,PKP_Linia_Hutnicza_Szerokotorowa_Sp__z_o__o_,PKP_Polskie_Linie_Kolejowe",
+                    layers: "PMT_Linie_Kolejowe_Sp__z_o_o_,Kopalnia_Piasku_KOTLARNIA_-_Linie_Kolejowe_Sp__z__o_o_,Jastrzębska_Spółka_Kolejowa_Sp__z_o_o_,Infra_SILESIA_S_A_,EUROTERMINAL_Sławków_Sp__z_o_o_,Dolnośląska_Służba_Dróg_i_Kolei_we_Wrocławiu,CARGOTOR_Sp__z_o_o_,PKP_SKM_w_Trójmieście_Sp__z_o_o_,PKP_Linia_Hutnicza_Szerokotorowa_Sp__z_o__o_,PKP_Polskie_Linie_Kolejowe",
                     transparent: "true",
                     format: "image/png",
                     version: "1.3.0",
@@ -508,7 +508,7 @@
 
             tileSizeMil = new window.OpenLayers.Size(1024,1024);
             var geop_b_city = new OpenLayers.Layer.WMS(
-                "Granice - Miasta",
+                "Border - Miasta",
                 wms_border_city,
                 {
                     layers: "A06_Granice_obrebow_ewidencyjnych,A05_Granice_jednostek_ewidencyjnych,A04_Granice_miast",
@@ -539,7 +539,7 @@
             }
 
             var geop_b_woj = new OpenLayers.Layer.WMS(
-                "Granice - woj",
+                "Border - woj",
                 wms_border_city,
                 {
                     layers: "A01_Granice_wojewodztw",
@@ -570,7 +570,7 @@
             }
 
             var geop_b_pl = new OpenLayers.Layer.WMS(
-                "Granice - PL",
+                "Border - PL",
                 wms_border_city,
                 {
                     layers: "A00_Granice_panstwa",
@@ -599,7 +599,6 @@
             if ("undefined" != typeof I18n.translations.pl) {
                 I18n.translations.pl.layers.name["pl"] = "Border - PL";
             }
-
 
             console.log('Geoportal: adding layers');
             if(my_wazeMap.getLayersByName("Geoportal - orto").length == 0)
