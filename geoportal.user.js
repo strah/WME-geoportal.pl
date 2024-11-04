@@ -23,7 +23,7 @@
 
 /* Changelog:
  *
- *  0.2.15.21 - added city, voivodeship and country borders overlay
+ *  0.2.15.21 - added city, voivodeship and country borders overlay (by Falcon4Tech)
  *  0.2.15.20 - css tweaks - moving toggles to the "view" section
  *  0.2.15.19 - css tweaks
  *  0.2.15.18 - accommodating WME updates (by @luc45z)
@@ -508,7 +508,7 @@
 
             tileSizeMil = new window.OpenLayers.Size(1024,1024);
             var geop_b_city = new OpenLayers.Layer.WMS(
-                "Border - Miasta",
+                "Geoportal - Miasta",
                 wms_border_city,
                 {
                     layers: "A06_Granice_obrebow_ewidencyjnych,A05_Granice_jednostek_ewidencyjnych,A04_Granice_miast",
@@ -539,7 +539,7 @@
             }
 
             var geop_b_woj = new OpenLayers.Layer.WMS(
-                "Border - woj",
+                "Geoportal - województwa",
                 wms_border_city,
                 {
                     layers: "A01_Granice_wojewodztw",
@@ -570,7 +570,7 @@
             }
 
             var geop_b_pl = new OpenLayers.Layer.WMS(
-                "Border - PL",
+                "Geoportal - Granica PL",
                 wms_border_city,
                 {
                     layers: "A00_Granice_panstwa",
